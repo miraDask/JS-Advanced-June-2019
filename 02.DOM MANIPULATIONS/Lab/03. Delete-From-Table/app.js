@@ -1,18 +1,20 @@
-function deleteByEmail() {
-    const input = document.querySelector('input').value;
-    const result = document.querySelector('#result');
-    const tableDataCollection = Array.from(document.querySelectorAll('td'));
-    const emailCollection = tableDataCollection
-        .filter((td, i) => i % 2 !== 0)
-        .map(e => e.textContent);
+function focus() {
+    let inputElements = Array.from(document.querySelectorAll('input'));
 
-    if (!emailCollection.includes(input)) {
-        result.textContent = 'Not found.';
-    } else {
-        const currentTd = tableDataCollection.find(td => td.textContent === input);
-        const currentTr = currentTd.parentNode;
-        const tableBody = currentTr.parentNode;
-        tableBody.removeChild(currentTr);
-        result.textContent = 'Deleted.';
+    function setFocus(e) {
+        const parent = e.target.parentNode;
+        parent.classList.add('focused');
     }
+
+    function removeFocus(e) {
+        const parent = e.target.parentNode;
+        parent.classList.remove('focused');
+    }
+
+    inputElements.forEach(e => {
+        e.addEventListener('focus', setFocus);
+        e.addEventListener('blur', removeFocus);
+    });
+
+
 }
