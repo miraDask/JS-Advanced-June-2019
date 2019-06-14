@@ -13,10 +13,10 @@ function deleteByEmail() {
 
     const emailsReg = (function () {
         let emails = {};
-        const emailIndex = [...document.querySelector(SELECTORS.TABLE_HEAD_ROWS).children]
+        const emailIndex = Array.from(document.querySelector(SELECTORS.TABLE_HEAD_ROWS).children)
             .find(td => td.textContent === SELECTORS.EMAIL_TR_TEXT).cellIndex;
 
-        [...document.querySelectorAll('tbody tr')].forEach(tr => {
+        Array.from(document.querySelectorAll('tbody tr')).forEach(tr => {
             let emailElement = tr.children[emailIndex];
             emails[emailElement.textContent] = tr;
         });
