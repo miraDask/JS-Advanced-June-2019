@@ -1,16 +1,11 @@
 function encodeAndDecodeMessages() {
-	const BUTTONS_TEXTS = {
-		SENDER: 'Encode and send it',
-		RECIEVER: 'Decode and read it'
-	}
-
 	const CODING_COMMANDS = {
 		ENCODE: 'encode',
 		DECODE: 'decode'
 	}
 
 	const [messageArea, receiverArea] = document.getElementsByTagName('textarea');
-	const [encodingBtn, dencodingBtn] = document.getElementsByTagName('button');
+	const buttons = document.getElementsByTagName('button');
 
 	const handleMessage = (message, command) => {
 		let result = '';
