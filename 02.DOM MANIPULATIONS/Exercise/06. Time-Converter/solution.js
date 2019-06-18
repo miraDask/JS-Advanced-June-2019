@@ -19,14 +19,14 @@ function attachEventsListeners() {
 		seconds: 0
 	}
 
-	const getDays = (value, convertionType) => {
+	const getDays = (value, conversionType) => {
 		let days = 0;
 
-		if (convertionType === 'days') {
+		if (conversionType === 'days') {
 			days = value;
-		} else if (convertionType === 'hours') {
+		} else if (conversionType === 'hours') {
 			days = value / oneDay.hours;
-		} else if (convertionType === 'minutes') {
+		} else if (conversionType === 'minutes') {
 			days = value / oneDay.minutes;
 		} else {
 			days = value / oneDay.seconds;
@@ -35,8 +35,8 @@ function attachEventsListeners() {
 		return days;
 	}
 
-	const converValues = (valueToConvert, convertionType) => {
-		const days = getDays(valueToConvert, convertionType);
+	const convertValues = (valueToConvert, conversionType) => {
+		const days = getDays(valueToConvert, conversionType);
 
 		outputValues.days = days;
 		outputValues.hours = oneDay.hours * days;
@@ -53,9 +53,9 @@ function attachEventsListeners() {
 
 	const eventHandler = (e) => {
 		const input = e.target.previousElementSibling;
-		const convertionType = input.id;
+		const conversionType = input.id;
 		const valueToConvert = +input.value;
-		converValues(valueToConvert, convertionType);
+		convertValues(valueToConvert, conversionType);
 		displayConvertedValues();
 	}
 
