@@ -1,13 +1,13 @@
 function sumRangeOfNumbers(arr, startIndex, endIndex) {
-    const isNotArrayOfNumbers = (arr) =>{
-      return  arr.some(x => x !== +x);
+    const isNotArrayOfNumbers = (arr) => {
+        return arr.some(x => x !== +x);
     }
-    
+
     if (!Array.isArray(arr) || isNotArrayOfNumbers(arr)) {
         return NaN;
-    } else if (startIndex < 0 || arr.length <= startIndex)  {
+    } else if (startIndex < 0 || arr.length <= startIndex) {
         startIndex = 0;
-    } else if (endIndex >= arr.length) {    // if is < 0 check ?
+    } else if (endIndex >= arr.length) { // if is < 0 check ?
         endIndex = arr.length - 1;
     }
 
