@@ -27,13 +27,13 @@ let registerTickets = function (ticketsData, sortingCriterion) {
     sortTickets(sortingCriterion, tickets);
     return tickets;
 }
+// test:
+// let result = registerTickets(['Philadelphia|94.20|available',
+//         'New York City|95.99|available',
+//         'New York City|95.99|sold',
+//         'Boston|126.20|departed'
+//     ],
+//     'destination'
+// )
 
-let result = registerTickets(['Philadelphia|94.20|available',
-        'New York City|95.99|available',
-        'New York City|95.99|sold',
-        'Boston|126.20|departed'
-    ],
-    'destination'
-)
-
-console.log(result)
+// console.log(result)
