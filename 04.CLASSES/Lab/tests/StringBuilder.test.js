@@ -1,5 +1,5 @@
 const assert = require('chai').assert;
-const StringBuilder = require('../07.String Builder/StringBuilder');
+const StringBuilder = require('../07.StringBuilder');
 
 describe('StringBuilder', function () {
     let stringBuilder;

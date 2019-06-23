@@ -1,8 +1,8 @@
 {
-  "name": "07.string-builder",
+  "name": "tests",
   "version": "1.0.0",
   "description": "",
-  "main": "StringBuilder.js",
+  "main": "StringBuilder.test.js",
   "dependencies": {
     "chai": "^4.2.0"
   },
