@@ -1,15 +1,14 @@
 class Kitchen {
     constructor(budget) {
         this.budget = budget;
+        this.menu = {};
         this.productsInStock = {};
         this.actionsHistory = [];
-        this.menu = {};
     }
 
     loadProducts(products) {
-        let actionsReport = [];
-        const parseProductData = (productData) => {
-            const [name, quantity, price] = [...productData.split(' ')];
+        const getProduct = (productData) => {
+            const [name, quantity, price] = productData.split(' ');
             return {
                 name: name,
                 quantity: +quantity,
@@ -17,55 +16,44 @@ class Kitchen {
             }
         }
 
-        const byuProduct = (product) => {
-            if (this.budget >= product.price) {
-                if (!this.productsInStock[product.name]) {
+        const tryToByuProduct = (product) => {
+            let productIsBought = false;
+            if (product.price <= this.budget) {
+                if (!this.productsInStock.hasOwnProperty(product.name)) {
                     this.productsInStock[product.name] = 0;
                 }
 
                 this.productsInStock[product.name] += product.quantity;
                 this.budget -= product.price;
-                return true;
-
-            } else {
-                return false;
+                productIsBought = true;
             }
+
+            return productIsBought;
         }
 
         const addReport = (product, productIsPurchased) => {
-            if (productIsPurchased) {
-                actionsReport.push(`Successfully loaded ${product.quantity} ${product.name}`);
-            } else {
-                actionsReport.push(`There was not enough money to load ${product.quantity} ${product.name}`);
+            const report = {
+                true: `Successfully loaded ${product.quantity} ${product.name}`,
+                false: `There was not enough money to load ${product.quantity} ${product.name}`
             }
+
+            this.actionsHistory.push(report[productIsPurchased]);
         }
 
         products.forEach(pd => {
-            const product = parseProductData(pd);
-            const productIsPurchased = byuProduct(product);
+            const product = getProduct(pd);
+            const productIsPurchased = tryToByuProduct(product);
             addReport(product, productIsPurchased);
-            this.actionsHistory.push(...actionsReport);
         });
 
-        return actionsReport.join('\n');
+        return this.actionsHistory.join('\n');
     }
 
-    addToMenu(meal, neededProductsData, price) {
-        const getProducts = (neededProductsData) => {
-            let products = {};
-
-            neededProductsData.forEach(pd => {
-                const [name, quantity] = [...pd.split(' ')];
-                products[name] = +quantity;
-            })
-
-            return products;
-        }
-
-        const addMealToTheMenu = (neededProducts) => {
+    addToMenu(meal, neededProducts, price) {
+        const addMealToTheMenu = () => {
             this.menu[meal] = {
-                neededProducts,
-                price
+                products: neededProducts,
+                price: +price
             }
         }
 
@@ -78,9 +66,7 @@ class Kitchen {
             return reports[key];
         }
 
-        const neededProducts = getProducts(neededProductsData);
-
-        if (!this.menu[meal]) {
+        if (!this.menu.hasOwnProperty(meal)) {
             addMealToTheMenu(neededProducts);
             return report('addedMeal');
         } else {
@@ -89,28 +75,43 @@ class Kitchen {
     }
 
     showTheMenu() {
-        if (Object.keys(this.menu).length === 0) {
-            return 'Our menu is not ready yet, please come later...';
-        } else {
-            const menuInfo = [];
-            Object.keys(this.menu).forEach(key => {
-                menuInfo.push(`${key} - $ ${this.menu[key].price}`);
+        const menuIsEmptyMessage = 'Our menu is not ready yet, please come later...';
+        const meals = Object.keys(this.menu);
+
+        const getMenuInfo = () => {
+            let info = [];
+            meals.forEach(meal => {
+                info.push(`${meal} - $ ${this.menu[meal].price}`);
             });
 
-            return menuInfo.join('\n');
+            return info;
+        }
+
+        if (meals.length === 0) {
+            return menuIsEmptyMessage;
+        } else {
+            const menuInfo = getMenuInfo();
+            return menuInfo.join('\n') + '\n';
         }
     }
 
     makeTheOrder(meal) {
-        const productsCheck = () => {
+        const getProducts = () => {
+            let products = {};
+            let productsData = this.menu[meal].products;
+            productsData.forEach(pd => {
+                const [productName, quantity] = pd.split(' ');
+                products[productName] = +quantity;
+            })
+
+            return products;
+        }
+        const productsCheck = (products) => {
             let result = true;
 
-            Object.keys(this.menu[meal].neededProducts).forEach(product => {
-                if (!this.productsInStock[product]) {
-                    result = false;
-                }
-
-                if (this.menu[meal].neededProducts[product] > this.productsInStock[product]) {
+            Object.keys(products).forEach(product => {
+                if (!this.productsInStock.hasOwnProperty(product) ||
+                    products[product] > this.productsInStock[product]) {
                     result = false;
                 }
             })
@@ -118,12 +119,9 @@ class Kitchen {
             return result;
         }
 
-        const useProducts = () => {
-            Object.keys(this.menu[meal].neededProducts).forEach(product => {
-                this.productsInStock[product] -= this.menu[meal].neededProducts[product];
-                if (this.productsInStock[product] <= 0) {
-                    delete this.productsInStock[product];
-                }
+        const useProducts = (products) => {
+            Object.keys(products).forEach(product => {
+                this.productsInStock[product] -= products[product];
             })
         }
 
@@ -131,35 +129,39 @@ class Kitchen {
             this.budget += this.menu[meal].price;
         }
 
-        if (!this.menu[meal]) {
+        if (!this.menu.hasOwnProperty(meal)) {
             return `There is not ${meal} yet in our menu, do you want to order something else?`;
         } else {
-            const haveAllNeededProducts = productsCheck();
+            const products = getProducts();
+            const haveAllNeededProducts = productsCheck(products);
             if (!haveAllNeededProducts) {
                 return `For the time being, we cannot complete your order (${meal}), we are very sorry...`;
             } else {
-                useProducts();
+                useProducts(products);
                 gainProfit();
                 return `Your order (${meal}) will be completed in the next 30 minutes and will cost you ${this.menu[meal].price}.`;
             }
         }
     }
 }
+//local tests:
+// let kitchen = new Kitchen(1000);
+// console.log(kitchen.loadProducts(['Banana 10 5', 'Banana 20 10', 'Strawberries 50 30', 'Yogurt 10 10', 'Yogurt 500 1500', 'Honey 5 50']));
+// console.log(kitchen.loadProducts(['Banana 10 5', 'Banana 20 10', 'Strawberries 50 30', 'Yogurt 10 10', 'Yogurt 500 1500', 'Honey 5 50']));
+// console.log(kitchen.loadProducts(['Banana 10 5', 'Banana 20 10', 'Strawberries 50 30', 'Yogurt 10 10', 'Yogurt 500 1500', 'Honey 5 50']));
 
-let kitchen = new Kitchen(1000);
-console.log(kitchen.loadProducts(['Banana 10 5', 'Banana 20 10', 'Strawberries 50 30', 'Yogurt 10 10', 'Yogurt 500 1500', 'Honey 5 50']));
-console.log(kitchen.loadProducts(['Banana 10 5', 'Banana 20 10', 'Strawberries 50 30', 'Yogurt 10 10', 'Yogurt 500 1500', 'Honey 5 50']));
-console.log(kitchen.actionsHistory)
-console.log(kitchen.productsInStock);
-console.log(kitchen.addToMenu('frozenYogurt', ['Yogurt 1', 'Honey 1', 'Banana 1', 'Strawberries 10'], 9.99));
-console.log(kitchen.addToMenu('Pizza', ['Flour 0.5', 'Oil 0.2', 'Yeast 0.5', 'Salt 0.1', 'Sugar 0.1', 'Tomato sauce 0.5', 'Pepperoni 1', 'Cheese 1.5'], 15.55));
-console.log(kitchen.showTheMenu());
-kitchen.makeTheOrder('Pizza');
-kitchen.makeTheOrder('Pizza');
+// console.log(kitchen.actionsHistory)
+// console.log(kitchen.productsInStock);
+// console.log(kitchen.addToMenu('frozenYogurt', ['Yogurt 1', 'Honey 1', 'Banana 1', 'Strawberries 10'], 9.99));
+// console.log(kitchen.addToMenu('Pizza', ['Flour 0.5', 'Oil 0.2', 'Yeast 0.5', 'Salt 0.1', 'Sugar 0.1', 'Tomato sauce 0.5', 'Pepperoni 1', 'Cheese 1.5'], 15.55));
+// console.log(kitchen.showTheMenu());
+// console.log(kitchen.makeTheOrder('Pizza'));
+// console.log(kitchen.makeTheOrder('Pizza'));
 
-for (let i = 0; i < 105; i++) {
+// for (let i = 0; i < 105; i++) {
 
-    kitchen.makeTheOrder('frozenYogurt');
-}
+//     console.log(kitchen.makeTheOrder('frozenYogurt'));
 
-console.log(kitchen.productsInStock)
+// }
+
+// console.log(kitchen.productsInStock)
