@@ -129,15 +129,3 @@ class Hotel {
         return message.trim();
     }
 }
-//tests:
-let hotel = new Hotel('HotUni', 10);
-
-// hotel.rentARoom('Peter', 'single', 4);
-// hotel.rentARoom('Robert', 'double', 4);
-// hotel.rentARoom('Geroge', 'maisonette', 6);
-
-hotel.roomService(3, 'housekeeping');
-hotel.roomService(3, 'drink');
-hotel.roomService(2, 'room');
-hotel.checkOut(1)
-console.log(hotel.report());
