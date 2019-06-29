@@ -3,14 +3,14 @@ class Hotel {
         this.name = name;
         this.capacity = capacity; // count of the hotel's rooms
         this.bookings = [];
-        this._roomsCapacity = this._getRoomsCapacity()
-        this._servicesPrices = this.servicesPricing();
-        this._roomsPrices = this.roomsPricing();
+        this._roomsCapacity = this._getRoomsCapacity();
+        this._servicesPrices = this.servicesPricing;
+        this._roomsPrices = this.roomsPricing;
 
         this.currentBookingNumber = 1;
     }
 
-    roomsPricing() {
+   get roomsPricing() {
         return {
             single: 50,
             double: 90,
@@ -18,13 +18,14 @@ class Hotel {
         }
     }
 
-    servicesPricing() {
+    get servicesPricing() {
         return {
             food: 10,
             drink: 15,
             housekeeping: 25
         }
     }
+
     _getRoomsCapacity() {
         return {
             single: parseInt(this.capacity * 0.5),
@@ -126,4 +127,16 @@ class Hotel {
         return message.trim();
     }
 }
+//tests:
+// let hotel = new Hotel('HotUni', 10);
+
+// hotel.rentARoom('Peter', 'single', 4);
+// hotel.rentARoom('Robert', 'double', 4);
+// hotel.rentARoom('Geroge', 'maisonette', 6);
+
+// hotel.roomService(3, 'housekeeping');
+// hotel.roomService(3, 'drink');
+// hotel.roomService(2, 'room');
+
+// console.log(hotel.report());
 
