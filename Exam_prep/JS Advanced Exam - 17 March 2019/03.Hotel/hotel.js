@@ -10,7 +10,7 @@ class Hotel {
         this.currentBookingNumber = 1;
     }
 
-   get roomsPricing() {
+    get roomsPricing() {
         return {
             single: 50,
             double: 90,
@@ -28,9 +28,9 @@ class Hotel {
 
     _getRoomsCapacity() {
         return {
-            single: parseInt(this.capacity * 0.5),
-            double: parseInt(this.capacity * 0.3),
-            maisonette: parseInt(this.capacity * 0.2)
+            single: this.capacity * 0.5,
+            double: this.capacity * 0.3,
+            maisonette: this.capacity * 0.2
         }
     }
 
@@ -91,6 +91,9 @@ class Hotel {
         const roomType = currentBooking[currentBookingNumber].roomType
         this._roomsCapacity[roomType]++;
 
+        const index = this.bookings.indexOf(currentBooking);
+        this.bookings.splice(index, 1);
+
         let message = `We hope you enjoyed your time here, Mr./Mrs. ${clientName}.` +
             ` The total amount of money you have to pay is ${totalMoney} BGN.`
 
@@ -120,23 +123,22 @@ class Hotel {
             message += `roomType - ${b[bookingNumber].roomType}\n`;
             message += `nights - ${b[bookingNumber].nights}\n`;
             message += b[bookingNumber].services ? `services: ${b[bookingNumber].services.join(', ')}\n` : '';
-            message += i === this.bookings.length -1 ? '' : '-'.repeat(10) + '\n';
-            
+            message += i === this.bookings.length - 1 ? '' : '-'.repeat(10) + '\n';
+
         })
 
         return message.trim();
     }
 }
 //tests:
-// let hotel = new Hotel('HotUni', 10);
+let hotel = new Hotel('HotUni', 10);
 
-// hotel.rentARoom('Peter', 'single', 4);
-// hotel.rentARoom('Robert', 'double', 4);
-// hotel.rentARoom('Geroge', 'maisonette', 6);
+hotel.rentARoom('Peter', 'single', 4);
+hotel.rentARoom('Robert', 'double', 4);
+hotel.rentARoom('Geroge', 'maisonette', 6);
 
-// hotel.roomService(3, 'housekeeping');
-// hotel.roomService(3, 'drink');
-// hotel.roomService(2, 'room');
-
-// console.log(hotel.report());
-
+hotel.roomService(3, 'housekeeping');
+hotel.roomService(3, 'drink');
+hotel.roomService(2, 'room');
+hotel.checkOut(1)
+console.log(hotel.report());
