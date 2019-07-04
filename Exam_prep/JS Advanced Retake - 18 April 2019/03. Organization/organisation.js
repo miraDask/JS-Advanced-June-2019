@@ -73,18 +73,6 @@ class Organization {
     }
 }
 
-let organization = new Organization('SoftUni', 200000);
-
-console.log(organization.add('Peter', 'marketing', 1200));
-console.log(organization.add('Peter2', 'marketing', 2000));
-console.log(organization.add('Peter3', 'marketing', 22000));
-
-console.log(organization.add('Robert1', 'production', 5000));
-console.log(organization.add('Robert2', 'production', 2000));
-console.log(organization.add('Robert3', 'finance', 22000));
-console.log(organization.add('Robert4', 'finance', 200));
-console.log(organization.status());
-
 
 
 
