@@ -1,80 +1,71 @@
 const assert = require('chai').assert;
-const PizzUni = require('./02. PizzUni_Ресурси');
+const PizzUni = require('./02. PizzUni');
 
-describe('myClass...', () => {
+describe('PizzUni tests...', () => {
+    let pizzUni;
+    const email = 'aaa@abv.bg';
+    
+    beforeEach(() => {
+        pizzUni = new PizzUni();
+    })
 
     describe('constructor...', () => {
-        it('creates 2 empty arrays', () => {
-            const pizzUni = new PizzUni();
+        it('creates "registeredUsers" property as empty array', () => {
             assert.deepEqual(pizzUni.registeredUsers, []);
+        })
+
+        it('creates "orders" property as empty array', () => {
             assert.deepEqual(pizzUni.orders, []);
         })
 
-        it('creates empty arry', () => {
-            const pizzUni = new PizzUni();
-            assert.deepEqual(pizzUni.orders, []);
-
-        })
-
-        it('creates obj', () => {
-            const pizzUni = new PizzUni();
-
+        it('creates "availableProducts" prop as correct object', () => {
             const expected = {
                 pizzas: ['Italian Style', 'Barbeque Classic', 'Classic Margherita'],
                 drinks: ['Coca-Cola', 'Fanta', 'Water']
             }
 
-            assert.equal(JSON.stringify(pizzUni.availableProducts), JSON.stringify(expected));
+            const result = pizzUni.availableProducts;
+            assert.deepEqual(result, expected);
         })
-
     })
 
-    describe('registerUser...', () => {
-        it('add new user correctly', () => {
-            const pizzUni = new PizzUni();
-            pizzUni.registerUser('aaa@abv.bg');
+    describe('registerUser method...', () => {
+        it('adds new user correctly in "registeredUsers" property', () => {
+            pizzUni.registerUser(email);
             const expected = [{
-                email: 'aaa@abv.bg',
+                email: email,
                 orderHistory: []
             }];
+
             assert.deepEqual(pizzUni.registeredUsers, expected)
         })
 
         it('returns correct obj', () => {
-            const pizzUni = new PizzUni();
-            const result = pizzUni.registerUser('aaa@abv.bg');
+            const result = pizzUni.registerUser(email);
             const expected = {
-                email: 'aaa@abv.bg',
+                email: email,
                 orderHistory: []
             };
             assert.deepEqual(result, expected)
         })
 
-        it('throws', () => {
-            const pizzUni = new PizzUni();
-            const email = 'aaa@abv.bg';
+        it('throws Error if email is already registered', () => {
             pizzUni.registerUser(email);
             assert.throw(() => pizzUni.registerUser(email), `This email address (${email}) is already being used!`)
         })
 
-        describe('makeAnOrder...', () => {
-            it('throws', () => {
-                const pizzUni = new PizzUni();
-
-                assert.throws(() => pizzUni.makeAnOrder('aaa@abv.bg', 'any', 'any'), `You must be registered to make orders!`)
+        describe('makeAnOrder method...', () => {
+            it('throws Error if email is not registered', () => {
+                assert.throws(() => pizzUni.makeAnOrder(email, 'Italian Style', 'Coca-Cola'), `You must be registered to make orders!`)
             })
 
-            it('throws', () => {
-                const pizzUni = new PizzUni();
-                const email = 'aaa@abv.bg';
+            it('throws Error if not present in menu pizza is ordered', () => {
                 pizzUni.registerUser(email);
 
-                assert.throws(() => pizzUni.makeAnOrder(email, 'any', 'any'), `You must order at least 1 Pizza to finish the order.`)
+                assert.throws(() => pizzUni.makeAnOrder(email, 'any', 'Coca-Cola'), `You must order at least 1 Pizza to finish the order.`)
             })
 
             it('register correctly', () => {
-                const pizzUni = new PizzUni();
-                const email = 'aaa@abv.bg';
                 pizzUni.registerUser(email);
                 let result = pizzUni.makeAnOrder(email, 'Italian Style', 'Coca-Cola');
                 
@@ -97,8 +88,6 @@ describe('myClass...', () => {
             })
 
             it('register correctly', () => {
-                const pizzUni = new PizzUni();
-                const email = 'aaa@abv.bg';
                 pizzUni.registerUser(email);
                 let result = pizzUni.makeAnOrder(email, 'Italian Style', 'Coca');
                 
@@ -122,8 +111,6 @@ describe('myClass...', () => {
 
         describe('completeOrder...', () => {
             it("correct", () => {
-                const pizzUni = new PizzUni();
-                const email = 'aaa@abv.bg';
                 pizzUni.registerUser(email);
                 pizzUni.makeAnOrder(email, 'Italian Style', 'Coca-Cola');
                 let result = pizzUni.completeOrder();
@@ -139,8 +126,6 @@ describe('myClass...', () => {
             })
 
             it('register correctly', () => {
-                const pizzUni = new PizzUni();
-                const email = 'aaa@abv.bg';
                 pizzUni.registerUser(email);
                 pizzUni.makeAnOrder(email, 'Italian Style', 'Coca');
                 let result = pizzUni.detailsAboutMyOrder(0);
@@ -152,8 +137,6 @@ describe('myClass...', () => {
 
     describe('doesTheUserExist...', () => {
         it('returns correct', () => {
-            const pizzUni = new PizzUni();
-            const email = 'aaa@abv.bg';
             pizzUni.registerUser(email);
            
             let result = pizzUni.doesTheUserExist(email);
@@ -165,7 +148,6 @@ describe('myClass...', () => {
             assert.deepEqual(expected, result)
         })
     })
-
 })
 
 //mocha .\test
