@@ -53,90 +53,90 @@ describe('PizzUni tests...', () => {
             pizzUni.registerUser(email);
             assert.throw(() => pizzUni.registerUser(email), `This email address (${email}) is already being used!`)
         })
+    })
 
-        describe('makeAnOrder method...', () => {
-            it('throws Error if email is not registered', () => {
-                assert.throws(() => pizzUni.makeAnOrder(email, 'Italian Style', 'Coca-Cola'), `You must be registered to make orders!`)
-            })
+    describe('makeAnOrder method...', () => {
+        it('throws Error if email is not registered', () => {
+            assert.throws(() => pizzUni.makeAnOrder(email, 'Italian Style', 'Coca-Cola'), `You must be registered to make orders!`)
+        })
 
-            it('throws Error if not present in menu pizza is ordered', () => {
-                pizzUni.registerUser(email);
+        it('throws Error if not present in menu pizza is ordered', () => {
+            pizzUni.registerUser(email);
 
-                assert.throws(() => pizzUni.makeAnOrder(email, 'any', 'Coca-Cola'), `You must order at least 1 Pizza to finish the order.`)
-            })
+            assert.throws(() => pizzUni.makeAnOrder(email, 'any', 'Coca-Cola'), `You must order at least 1 Pizza to finish the order.`)
+        })
 
-            it('register correctly', () => {
-                pizzUni.registerUser(email);
-                let result = pizzUni.makeAnOrder(email, 'Italian Style', 'Coca-Cola');
-                
-                let user = pizzUni.registeredUsers.find(u => u.email);
-                let firstObj = [{
-                    orderedPizza : 'Italian Style',
-                    orderedDrink : 'Coca-Cola'
-                }];
+        it('register correctly', () => {
+            pizzUni.registerUser(email);
+            let result = pizzUni.makeAnOrder(email, 'Italian Style', 'Coca-Cola');
+            
+            let user = pizzUni.registeredUsers.find(u => u.email === email);
+            let firstObj = [{
+                orderedPizza : 'Italian Style',
+                orderedDrink : 'Coca-Cola'
+            }];
 
-                let secondObj = [{
-                    orderedPizza : 'Italian Style',
-                    orderedDrink : 'Coca-Cola',
-                    email : email,
-                    status: 'pending'
-                }]
+            let secondObj = [{
+                orderedPizza : 'Italian Style',
+                orderedDrink : 'Coca-Cola',
+                email : email,
+                status: 'pending'
+            }]
 
-                assert.deepEqual(user.orderHistory, firstObj)
-                assert.deepEqual(pizzUni.orders, secondObj)
-                assert.equal(result, 0);
-            })
+            assert.deepEqual(user.orderHistory, firstObj)
+            assert.deepEqual(pizzUni.orders, secondObj)
+            assert.equal(result, 0);
+        })
 
-            it('register correctly', () => {
-                pizzUni.registerUser(email);
-                let result = pizzUni.makeAnOrder(email, 'Italian Style', 'Coca');
-                
-                let user = pizzUni.registeredUsers.find(u => u.email);
-                let firstObj = [{
-                    orderedPizza : 'Italian Style'
-                }];
+        it('register correctly', () => {
+            pizzUni.registerUser(email);
+            let result = pizzUni.makeAnOrder(email, 'Italian Style', 'Coca');
+            
+            let user = pizzUni.registeredUsers.find(u => u.email === email);
+            let firstObj = [{
+                orderedPizza : 'Italian Style'
+            }];
 
-                let secondObj = [{
-                    orderedPizza : 'Italian Style',
-                    email : email,
-                    status: 'pending'
-                }]
+            let secondObj = [{
+                orderedPizza : 'Italian Style',
+                email : email,
+                status: 'pending'
+            }]
 
-                assert.deepEqual(user.orderHistory, firstObj)
-                assert.deepEqual(pizzUni.orders, secondObj)
-                assert.equal(result, 0);
-            })
+            assert.deepEqual(user.orderHistory, firstObj)
+            assert.deepEqual(pizzUni.orders, secondObj)
+            assert.equal(result, 0);
+        })
+
+    })
+
+    describe('completeOrder...', () => {
+        it("correct", () => {
+            pizzUni.registerUser(email);
+            pizzUni.makeAnOrder(email, 'Italian Style', 'Coca-Cola');
+            let result = pizzUni.completeOrder();
+            let expected = {
+                orderedPizza : 'Italian Style',
+                orderedDrink : 'Coca-Cola',
+                email : email,
+                status: 'completed'
+            }
+
+            assert.deepEqual(expected, result);
 
         })
 
-        describe('completeOrder...', () => {
-            it("correct", () => {
-                pizzUni.registerUser(email);
-                pizzUni.makeAnOrder(email, 'Italian Style', 'Coca-Cola');
-                let result = pizzUni.completeOrder();
-                let expected = {
-                    orderedPizza : 'Italian Style',
-                    orderedDrink : 'Coca-Cola',
-                    email : email,
-                    status: 'completed'
-                }
-
-                assert.deepEqual(expected, result);
-
-            })
-
-            it('register correctly', () => {
-                pizzUni.registerUser(email);
-                pizzUni.makeAnOrder(email, 'Italian Style', 'Coca');
-                let result = pizzUni.detailsAboutMyOrder(0);
-                
-                assert.equal(result, `Status of your order: pending`);
-            })
+        it('register correctly', () => {
+            pizzUni.registerUser(email);
+            pizzUni.makeAnOrder(email, 'Italian Style', 'Coca');
+            let result = pizzUni.detailsAboutMyOrder(0);
+            
+            assert.equal(result, `Status of your order: pending`);
         })
     })
 
     describe('doesTheUserExist...', () => {
-        it('returns correct', () => {
+        it('returns correct result if user exists', () => {
             pizzUni.registerUser(email);
            
             let result = pizzUni.doesTheUserExist(email);
@@ -146,6 +146,12 @@ describe('PizzUni tests...', () => {
             };
 
             assert.deepEqual(expected, result)
+        })
+
+        it('returns "undefined" if user does not exist', () => {
+            let result = pizzUni.doesTheUserExist(email);
+
+            assert.equal(undefined, result)
         })
     })
 })
