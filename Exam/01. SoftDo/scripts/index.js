@@ -6,133 +6,129 @@
 
 // This function will be invoked when the html is loaded. Check the console in the browser or index.html file.
 function mySolution() {
+    const imgSrc = './images/user.png';
+    const elements = {
+        btnSend: document.querySelector('button'),
+        textArea: document.querySelector('section#inputSection textarea'),
+        usernameArea: document.querySelector('input[type="username"]'),
+        pendingField: document.getElementById('pendingQuestions'),
+        openQuestionsField: document.getElementById('openQuestions')
+    }
 
-    const btn = document.querySelector('button');
-    const textArea = document.querySelector('section#inputSection textarea');
-    const usernameArea = document.querySelector('input[type="username"]');
-    const pendingField = document.getElementById('pendingQuestions');
-    const openQuestionsField = document.getElementById('openQuestions');
+    elements.btnSend.addEventListener('click', loadNewQuestionInPendingSection);
 
+    function loadNewQuestionInPendingSection() {
+        const text = elements.textArea.value;
 
-    const handleClickEvent = () => {
-        const text = textArea.value;
+        if (!text) {
+            return;
+        }
 
-        if (text) {
-            const username = usernameArea.value ? usernameArea.value : 'Anonymous';
+        const username = elements.usernameArea.value ? elements.usernameArea.value : 'Anonymous';
 
-            const openQuestions = function () {
-                const div = document.createElement('div');
-                div.className = 'openQuestion';
+        const divWrapper = createElement('div', 'pendingQuestion');
+        const img = createImgElement(imgSrc, 32, 32);
+        const span = createElement('span', '', username);
+        const p = createElement('p', '', text);
 
-                const img = document.createElement('img');
-                img.src = "./images/user.png";
-                img.width = '32';
-                img.height = '32';
-                div.appendChild(img);
+        const divBtnHolder = createElement('div', 'actions');
+        const archiveBtn = createElement('button', 'archive', 'Archive');
+        const openBtn = createElement('button', 'open', 'Open');
+        
+        parentAppendChildren([archiveBtn, openBtn], divBtnHolder);
+        parentAppendChildren([img, span, p , divBtnHolder], divWrapper);
+        elements.pendingField.appendChild(divWrapper);
 
-                const span = document.createElement('span');
-                span.textContent = `${username}`;
-                div.appendChild(span);
+        archiveBtn.addEventListener('click', function () {
+            divWrapper.remove();
+        });
 
-                const p = document.createElement('p');
-                p.textContent = `${text}`;
-                div.appendChild(p);
+        openBtn.addEventListener('click', loadQuestionInOpenQuestionsSection);
 
-                const div2 = document.createElement('div');
-                div2.className = 'actions';
-                const replyBtn = document.createElement('button');
-                replyBtn.className = 'reply';
-                replyBtn.textContent = 'Reply';
-                replyBtn.addEventListener('click', replay)
-                div2.appendChild(replyBtn);
-                div.appendChild(div2);
+        elements.textArea.value = '';
+        elements.usernameArea.value = '';
+    
+        function loadQuestionInOpenQuestionsSection() {
+            const divWrapper = createElement('div', 'openQuestion');
+            const img = createImgElement(imgSrc, 32, 32);
+            const span = createElement('span', '', username);
+            const p = createElement('p', '', text);
+    
+            const divBtnWrapper = createElement('div', 'actions');
+            const replyBtn = createElement('button','reply', 'Reply');
+            replyBtn.addEventListener('click', replyOnCurrentQuestion);
+            parentAppendChildren([replyBtn], divBtnWrapper);
+            parentAppendChildren([img, span, p, divBtnWrapper], divWrapper);
 
-                const div3 = document.createElement('div');
-                div3.className = 'replySection';
-                div3.style.display = 'none';
-                const input = document.createElement('input');
-                input.className = 'replyInput';
-                input.type = 'text';
-                input.placeholder = 'Reply to this question here...';
-                div3.appendChild(input);
-                const replyButton = document.createElement('button');
-                replyButton.className = 'replyButton';
-                replyButton.textContent = 'Send';
-                div3.appendChild(replyButton);
-                const ol = document.createElement('ol');
-                ol.className = 'reply';
-                ol.type = '1';
-                div3.appendChild(ol);
-                div.appendChild(div3);
-                openQuestionsField.appendChild(div);
+            const divReplySection = createElement('div', 'replySection');
+            divReplySection.style.display = 'none';
+            const input = createElement('input','replyInput');
+            input.type = 'text';
+            input.placeholder = 'Reply to this question here...';
+            const sendReplyButton = createElement('button', 'replyButton','Send');
+            const ol = createElement('ol', 'reply');
+            ol.setAttribute('type', '1');
 
-                this.parentNode.parentNode.remove();
+            parentAppendChildren([input,sendReplyButton, ol], divReplySection);
+            parentAppendChildren([divReplySection], divWrapper);
+    
+            elements.openQuestionsField.appendChild(divWrapper);
+    
+            this.parentNode.parentNode.remove();
 
-                function replay() {
-                    if (this.textContent === 'Reply') {
-                        div3.style.display = 'block';
-                        this.textContent = 'Back';
+            function replyOnCurrentQuestion() {
+                if (this.textContent === 'Reply') {
+                    this.textContent = 'Back';
+                    divReplySection.style.display = 'block';
 
-                        replyButton.addEventListener('click', () => {
-                            const answer = input.value;
-
-                            if (answer) {
-                                const li = document.createElement('li');
-                                li.textContent = answer;
-                                ol.appendChild(li);
-                                input.value = '';
-                            }
-                        });
-                    } else {
-                        div3.style.display = 'none';
-                        this.textContent = 'Reply';
-                       // input.value = '';
-                    }
+                    sendReplyButton.addEventListener('click', () => {
+                        const answer = input.value;
+        
+                        if (answer) {
+                            const li = createElement('li', '', answer);
+                            ol.appendChild(li);
+                            input.value = '';
+                        }
+                    });
+                } else {
+                    this.textContent = 'Reply';
+                    divReplySection.style.display = 'none';
+                    input.value = '';
                 }
             }
 
-            const div = document.createElement('div');
-            div.className = 'pendingQuestion';
-            const img = document.createElement('img');
-            img.src = "./images/user.png";
-            img.width = '32';
-            img.height = '32';
-            div.appendChild(img);
+            // function createDivWrapper(divWrapperClassName, ) {
 
-            const span = document.createElement('span');
-            span.textContent = `${username}`;
-            div.appendChild(span);
-
-            const p = document.createElement('p');
-            p.textContent = `${text}`;
-            div.appendChild(p);
-
-            const div2 = document.createElement('div');
-            div2.className = 'actions';
-
-            const archiveBtn = document.createElement('button');
-            archiveBtn.className = 'archive';
-            archiveBtn.textContent = 'Archive';
-            div2.appendChild(archiveBtn);
-            const openBtn = document.createElement('button');
-            openBtn.className = 'open';
-            openBtn.textContent = 'Open';
-            div2.appendChild(openBtn);
-            div.appendChild(div2);
-            pendingField.appendChild(div);
-
-            archiveBtn.addEventListener('click', function () {
-                div.remove();
-            });
-
-            openBtn.addEventListener('click', openQuestions);
-
-            textArea.value = '';
-            usernameArea.value = '';
+            // }
         }
     }
 
-    btn.addEventListener('click', handleClickEvent);
+    function createElement(tagName, className, text) {
+        const element = document.createElement(tagName);
 
+        if(className) {
+            element.className = className;
+        }
+
+        if(text) {
+            element.textContent = text;
+        }
+
+        return element;
+    } 
+
+    function createImgElement(src, width, height) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.width = width;
+        img.height = height;
+        return img;
+    }
+
+    function parentAppendChildren(childrenCollection, parent) {
+        childrenCollection.forEach(ch => {
+            parent.appendChild(ch);
+        });
+    }
 }
 // To check out your solution, just submit mySolution() function in judge system.
